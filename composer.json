@@ -4,16 +4,18 @@
     "type": "magento2-module",
     "license": "OSL-3.0",
     "require": {
-        "php": ">=8.3",
+        "php": ">=8.2",
         "magento/framework": "*",
         "magento/module-backend": "*",
         "magento/module-catalog": "*",
         "magento/module-catalog-rule": "*",
         "magento/module-config": "*",
         "magento/module-customer": "*",
+        "magento/module-configurable-product": "*",
         "magento/module-graph-ql": "*",
         "magento/module-indexer": "*",
         "magento/module-store": "*",
+        "magento/module-tax": "*",
         "magento/module-ui": "*"
     },
     "autoload": {

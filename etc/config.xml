@@ -7,9 +7,14 @@
                 <enabled>1</enabled>
                 <period_days>30</period_days>
                 <retention_days>365</retention_days>
+                <auto_clean>1</auto_clean>
                 <display_place>product_category</display_place>
                 <display_mode>discounted</display_mode>
                 <hide_equal>1</hide_equal>
+                <display_child_prices>1</display_child_prices>
+                <display_backend_history>1</display_backend_history>
+                <hidden_customer_groups></hidden_customer_groups>
+                <percentage_mode>discount_only</percentage_mode>
                 <label>Najniższa cena z {days} dni przed obniżką: {omnibus_price}</label>
             </general>
         </kkkonrad_omnibus>

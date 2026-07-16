@@ -5,4 +5,8 @@
         <plugin name="kkkonrad_omnibus_append_price_message"
                 type="Kkkonrad\Omnibus\Plugin\FinalPriceBoxPlugin" sortOrder="100"/>
     </type>
+    <type name="Magento\Catalog\Model\ResourceModel\Product\Collection">
+        <plugin name="kkkonrad_omnibus_prime_product_collection"
+                type="Kkkonrad\Omnibus\Plugin\ProductCollectionPlugin" sortOrder="100"/>
+    </type>
 </config>

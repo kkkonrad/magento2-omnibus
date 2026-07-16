@@ -37,6 +37,11 @@ class Config
         return max($this->getPeriodDays(), (int)$this->scopeConfig->getValue(self::XML_PREFIX . 'retention_days'));
     }
 
+    public function isAutoCleaningEnabled(): bool
+    {
+        return $this->scopeConfig->isSetFlag(self::XML_PREFIX . 'auto_clean');
+    }
+
     public function getDisplayPlace(?int $storeId = null): string
     {
         return (string)$this->scopeConfig->getValue(
@@ -68,6 +73,43 @@ class Config
     {
         return (string)$this->scopeConfig->getValue(
             self::XML_PREFIX . 'label',
+            ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    public function shouldDisplayChildPrices(?int $storeId = null): bool
+    {
+        return $this->scopeConfig->isSetFlag(
+            self::XML_PREFIX . 'display_child_prices',
+            ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    /** @return int[] */
+    public function getHiddenCustomerGroupIds(?int $storeId = null): array
+    {
+        $value = (string)$this->scopeConfig->getValue(
+            self::XML_PREFIX . 'hidden_customer_groups',
+            ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+        if ($value === '') {
+            return [];
+        }
+        return array_values(array_unique(array_map('intval', explode(',', $value))));
+    }
+
+    public function shouldDisplayBackendHistory(): bool
+    {
+        return $this->scopeConfig->isSetFlag(self::XML_PREFIX . 'display_backend_history');
+    }
+
+    public function getPercentageMode(?int $storeId = null): string
+    {
+        return (string)$this->scopeConfig->getValue(
+            self::XML_PREFIX . 'percentage_mode',
             ScopeInterface::SCOPE_STORE,
             $storeId
         );

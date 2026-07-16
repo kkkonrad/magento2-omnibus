@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">kkkonrad_omnibus_history_listing.kkkonrad_omnibus_history_listing_data_source</item>
+        </item>
+    </argument>
+    <settings>
+        <spinner>kkkonrad_omnibus_history_columns</spinner>
+        <deps>
+            <dep>kkkonrad_omnibus_history_listing.kkkonrad_omnibus_history_listing_data_source</dep>
+        </deps>
+    </settings>
+    <dataSource name="kkkonrad_omnibus_history_listing_data_source" component="Magento_Ui/js/grid/provider">
+        <settings>
+            <storageConfig>
+                <param name="indexField" xsi:type="string">history_id</param>
+            </storageConfig>
+            <updateUrl path="mui/index/render"/>
+        </settings>
+        <aclResource>Kkkonrad_Omnibus::history_view</aclResource>
+        <dataProvider class="Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider"
+                      name="kkkonrad_omnibus_history_listing_data_source">
+            <settings>
+                <requestFieldName>history_id</requestFieldName>
+                <primaryFieldName>history_id</primaryFieldName>
+            </settings>
+        </dataProvider>
+    </dataSource>
+    <listingToolbar name="listing_top">
+        <settings><sticky>true</sticky></settings>
+        <bookmark name="bookmarks"/>
+        <columnsControls name="columns_controls"/>
+        <filters name="listing_filters"/>
+        <paging name="listing_paging"/>
+        <massaction name="listing_massaction">
+            <action name="delete">
+                <settings>
+                    <confirm>
+                        <message translate="true">Delete selected price history records?</message>
+                        <title translate="true">Delete records</title>
+                    </confirm>
+                    <url path="kkkonrad_omnibus/history/massDelete"/>
+                    <type>delete</type>
+                    <label translate="true">Delete</label>
+                </settings>
+            </action>
+        </massaction>
+    </listingToolbar>
+    <columns name="kkkonrad_omnibus_history_columns">
+        <selectionsColumn name="ids">
+            <settings><indexField>history_id</indexField></settings>
+        </selectionsColumn>
+        <column name="history_id"><settings><filter>textRange</filter><label translate="true">ID</label></settings></column>
+        <column name="product_id"><settings><filter>textRange</filter><label translate="true">Product ID</label></settings></column>
+        <column name="sku"><settings><filter>text</filter><label translate="true">SKU</label></settings></column>
+        <column name="website_id"><settings><filter>textRange</filter><label translate="true">Website ID</label></settings></column>
+        <column name="website_name"><settings><filter>text</filter><label translate="true">Website</label></settings></column>
+        <column name="customer_group_id"><settings><filter>textRange</filter><label translate="true">Customer Group ID</label></settings></column>
+        <column name="currency_code"><settings><filter>text</filter><label translate="true">Currency</label></settings></column>
+        <column name="regular_price"><settings><filter>textRange</filter><label translate="true">Regular Price</label></settings></column>
+        <column name="effective_price"><settings><filter>textRange</filter><label translate="true">Effective Price</label></settings></column>
+        <column name="valid_from" class="Magento\Ui\Component\Listing\Columns\Date">
+            <settings><filter>dateRange</filter><dataType>date</dataType><label translate="true">Valid From</label></settings>
+        </column>
+        <column name="valid_to" class="Magento\Ui\Component\Listing\Columns\Date">
+            <settings><filter>dateRange</filter><dataType>date</dataType><label translate="true">Valid To</label></settings>
+        </column>
+        <column name="change_source"><settings><filter>text</filter><label translate="true">Source</label></settings></column>
+        <actionsColumn name="actions" class="Kkkonrad\Omnibus\Ui\Component\Listing\Column\HistoryActions">
+            <settings><indexField>history_id</indexField><label translate="true">Actions</label></settings>
+        </actionsColumn>
+    </columns>
+</listing>

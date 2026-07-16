@@ -16,11 +16,17 @@
                     <label>Calculation Period in Days</label>
                     <validate>required-entry validate-digits validate-greater-than-zero</validate>
                     <comment>Use at least 30 days for Polish Omnibus compliance.</comment>
+                    <backend_model>Kkkonrad\Omnibus\Model\Config\Backend\PeriodDays</backend_model>
                 </field>
                 <field id="retention_days" translate="label comment" type="text" sortOrder="30" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>History Retention in Days</label>
                     <validate>required-entry validate-digits validate-greater-than-zero</validate>
                     <comment>Must not be shorter than the calculation period.</comment>
+                    <backend_model>Kkkonrad\Omnibus\Model\Config\Backend\RetentionDays</backend_model>
+                </field>
+                <field id="auto_clean" translate="label" type="select" sortOrder="35" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Automatic History Cleanup</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
                 <field id="display_place" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Display Omnibus Price On</label>
@@ -37,6 +43,25 @@
                 <field id="label" translate="label comment" type="textarea" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Frontend Label</label>
                     <comment>Variables: {days}, {omnibus_price}, {percentage}. Basic formatting is sanitized.</comment>
+                </field>
+                <field id="display_child_prices" translate="label comment" type="select" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Display Configurable Child Prices</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Update the Omnibus message when a customer selects a variant.</comment>
+                </field>
+                <field id="hidden_customer_groups" translate="label" type="multiselect" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Hide for Customer Groups</label>
+                    <source_model>Magento\Customer\Model\Config\Source\Group\Multiselect</source_model>
+                    <can_be_empty>1</can_be_empty>
+                </field>
+                <field id="display_backend_history" translate="label" type="select" sortOrder="100" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Display History on Product Edit Page</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="percentage_mode" translate="label comment" type="select" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Percentage Difference</label>
+                    <source_model>Kkkonrad\Omnibus\Model\Config\Source\PercentageMode</source_model>
+                    <comment>Applied only when the {percentage} variable is present in the label.</comment>
                 </field>
             </group>
         </section>

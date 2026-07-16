@@ -1,0 +1,12 @@
+<?php
+/** @var \Kkkonrad\Omnibus\Block\Adminhtml\RebuildButton $block */
+?>
+<div class="page-main-actions">
+    <form method="post" action="<?= $escaper->escapeUrl($block->getRebuildUrl()) ?>"
+          onsubmit="return confirm('<?= $escaper->escapeJs(__('This will delete all price history and create a new baseline. Continue?')) ?>')">
+        <input type="hidden" name="form_key" value="<?= $escaper->escapeHtmlAttr($block->getFormKeyValue()) ?>">
+        <button type="submit" class="action-secondary">
+            <?= $escaper->escapeHtml(__('Rebuild History')) ?>
+        </button>
+    </form>
+</div>

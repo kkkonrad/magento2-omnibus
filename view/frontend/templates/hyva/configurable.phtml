@@ -1,0 +1,43 @@
+<?php
+declare(strict_types=1);
+
+use Hyva\Theme\ViewModel\HyvaCsp;
+
+/** @var HyvaCsp $hyvaCsp */
+?>
+<script>
+    function initKkkonradOmnibusPrice() {
+        return {
+            parentId: 0,
+            initialMessage: '',
+            message: '',
+            variantMessages: {},
+            init() {
+                this.parentId = Number(this.$root.dataset.parentId || 0);
+                this.initialMessage = this.$root.dataset.initialMessage || '';
+                this.message = this.initialMessage;
+                this.variantMessages = JSON.parse(this.$root.dataset.variantMessages || '{}');
+            },
+            isVisible() {
+                return this.message !== '';
+            },
+            eventListeners: {
+                ['@configurable-selection-changed.window'](event) {
+                    if (Number(event.detail.productId) !== this.parentId) {
+                        return;
+                    }
+                    const childId = String(event.detail.productIndex || '');
+                    this.message = childId && this.variantMessages[childId]
+                        ? this.variantMessages[childId]
+                        : this.initialMessage;
+                }
+            }
+        };
+    }
+    window.addEventListener(
+        'alpine:init',
+        () => Alpine.data('initKkkonradOmnibusPrice', initKkkonradOmnibusPrice),
+        {once: true}
+    );
+</script>
+<?php $hyvaCsp->registerInlineScript() ?>

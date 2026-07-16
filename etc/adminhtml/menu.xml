@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Kkkonrad_Omnibus::history" title="Omnibus Price History" module="Kkkonrad_Omnibus"
+             sortOrder="95" parent="Magento_Catalog::catalog" action="kkkonrad_omnibus/history/index"
+             resource="Kkkonrad_Omnibus::history_view"/>
+    </menu>
+</config>

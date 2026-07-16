@@ -19,6 +19,12 @@ class OmnibusPrice extends DataObject implements OmnibusPriceInterface
         return $value === null ? null : (float)$value;
     }
 
+    public function getLowestPrice(): ?float
+    {
+        $value = $this->getData(self::LOWEST_PRICE);
+        return $value === null ? null : (float)$value;
+    }
+
     public function getCurrencyCode(): string
     {
         return (string)$this->getData(self::CURRENCY_CODE);
@@ -38,5 +44,10 @@ class OmnibusPrice extends DataObject implements OmnibusPriceInterface
     public function hasActiveDiscount(): bool
     {
         return (bool)$this->getData(self::HAS_ACTIVE_DISCOUNT);
+    }
+
+    public function getMessage(): string
+    {
+        return (string)$this->getData(self::MESSAGE);
     }
 }

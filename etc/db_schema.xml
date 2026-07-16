@@ -54,6 +54,8 @@
                 comment="Current Effective Price"/>
         <column xsi:type="decimal" name="reference_price" scale="4" precision="20" unsigned="true" nullable="true"
                 comment="Lowest Price Before Reduction"/>
+        <column xsi:type="decimal" name="lowest_price" scale="4" precision="20" unsigned="true" nullable="true"
+                comment="Rolling Lowest Price"/>
         <column xsi:type="timestamp" name="promotion_started_at" on_update="false" nullable="true"
                 comment="Promotion Started At"/>
         <column xsi:type="timestamp" name="period_from" on_update="false" nullable="true" comment="Calculation From"/>

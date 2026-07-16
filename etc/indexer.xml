@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Indexer/etc/indexer.xsd">
+    <indexer id="kkkonrad_omnibus_price" view_id="kkkonrad_omnibus_price"
+             class="Kkkonrad\Omnibus\Indexer\Price">
+        <title translate="true">Omnibus Price History</title>
+        <description translate="true">Capture effective product prices and calculate the lowest prior price</description>
+        <dependencies>
+            <indexer id="catalog_product_price"/>
+        </dependencies>
+    </indexer>
+</config>

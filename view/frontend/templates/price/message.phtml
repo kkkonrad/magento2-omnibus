@@ -1,9 +1,17 @@
 <?php
 /** @var \Kkkonrad\Omnibus\Block\PriceMessage $block */
 $message = $block->getMessage();
+$variantMessages = $block->getVariantMessages();
 ?>
 <?php if ($message !== ''): ?>
-    <div class="kkkonrad-omnibus-price text-sm text-gray-600 mt-1" data-omnibus-price>
-        <?= /* @noEscape */ $message ?>
+    <div class="kkkonrad-omnibus-price text-sm text-gray-600 mt-1"
+         data-omnibus-price
+         data-parent-id="<?= (int)$block->getProduct()->getId() ?>"
+         data-initial-message="<?= $escaper->escapeHtmlAttr($message) ?>"
+         data-variant-messages="<?= $escaper->escapeHtmlAttr(json_encode($variantMessages)) ?>"
+         x-data="initKkkonradOmnibusPrice"
+         x-bind="eventListeners"
+         x-show="isVisible">
+        <span x-html="message"><?= /* @noEscape */ $message ?></span>
     </div>
 <?php endif; ?>

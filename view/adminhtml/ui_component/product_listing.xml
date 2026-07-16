@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <listingToolbar name="listing_top">
+        <massaction name="listing_massaction">
+            <action name="kkkonrad_omnibus_hide">
+                <settings>
+                    <url path="kkkonrad_omnibus/product/massVisibility/value/1"/>
+                    <type>kkkonrad_omnibus_hide</type>
+                    <label translate="true">Hide Omnibus Price</label>
+                </settings>
+            </action>
+            <action name="kkkonrad_omnibus_show">
+                <settings>
+                    <url path="kkkonrad_omnibus/product/massVisibility/value/0"/>
+                    <type>kkkonrad_omnibus_show</type>
+                    <label translate="true">Show Omnibus Price</label>
+                </settings>
+            </action>
+        </massaction>
+    </listingToolbar>
+</listing>

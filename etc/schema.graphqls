@@ -1,10 +1,12 @@
 type OmnibusPrice {
     current_price: Float!
     reference_price: Float
+    lowest_price: Float
     currency_code: String!
     period_days: Int!
     promotion_started_at: String
     has_active_discount: Boolean!
+    message: String!
 }
 
 interface ProductInterface {

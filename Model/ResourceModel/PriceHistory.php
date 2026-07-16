@@ -3,6 +3,9 @@ declare(strict_types=1);
 
 namespace Kkkonrad\Omnibus\Model\ResourceModel;
 
+use Kkkonrad\Omnibus\Api\LowestPriceCalculatorInterface;
+use Kkkonrad\Omnibus\Api\PromotionDetectorInterface;
+use Kkkonrad\Omnibus\Api\PeriodResolverInterface;
 use Kkkonrad\Omnibus\Model\Config;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\AdapterInterface;
@@ -16,7 +19,10 @@ class PriceHistory
 
     public function __construct(
         private readonly ResourceConnection $resource,
-        private readonly Config $config
+        private readonly Config $config,
+        private readonly LowestPriceCalculatorInterface $lowestPriceCalculator,
+        private readonly PromotionDetectorInterface $promotionDetector,
+        private readonly PeriodResolverInterface $periodResolver
     ) {
         $this->connection = $resource->getConnection();
     }
@@ -55,15 +61,38 @@ class PriceHistory
 
             if ($previous && $this->pricesEqual((float)$previous['regular_price'], $regularPrice)
                 && $this->pricesEqual((float)$previous['current_price'], $effectivePrice)) {
+                $rollingFrom = $this->periodResolver->getPeriodFrom(
+                    $now,
+                    $this->config->getPeriodDays($websiteId),
+                    $websiteId
+                );
+                $rollingLowest = $this->lowestPriceCalculator->calculate(
+                    $productId,
+                    $websiteId,
+                    $customerGroupId,
+                    $rollingFrom,
+                    $now
+                );
+                $this->connection->update($indexTable, [
+                    'lowest_price' => $rollingLowest ?? $effectivePrice,
+                    'calculated_at' => $now,
+                ], $contextWhere);
                 $this->connection->commit();
                 return;
             }
 
-            $activeDiscount = $effectivePrice < $regularPrice && !$this->pricesEqual($effectivePrice, $regularPrice);
+            $activeDiscount = $this->promotionDetector->hasActiveDiscount($regularPrice, $effectivePrice);
             $referencePrice = null;
             $promotionStartedAt = null;
             $periodFrom = null;
             $periodTo = null;
+            $rollingPeriodTo = $now;
+            $rollingPeriodFrom = $this->periodResolver->getPeriodFrom(
+                $now,
+                $this->config->getPeriodDays($websiteId),
+                $websiteId
+            );
+            $rollingLowestPrice = $effectivePrice;
 
             if ($previous) {
                 $this->connection->update(
@@ -73,13 +102,16 @@ class PriceHistory
                 );
 
                 $wasDiscounted = (bool)$previous['has_active_discount'];
-                $startsReduction = $activeDiscount && (
-                    !$wasDiscounted || $effectivePrice < (float)$previous['current_price']
+                $startsReduction = $this->promotionDetector->startsReduction(
+                    $wasDiscounted,
+                    (float)$previous['current_price'],
+                    $regularPrice,
+                    $effectivePrice
                 );
                 if ($startsReduction) {
                     $periodTo = $now;
-                    $periodFrom = gmdate('Y-m-d H:i:s', time() - ($this->config->getPeriodDays($websiteId) * 86400));
-                    $referencePrice = $this->findLowestPrice(
+                    $periodFrom = $rollingPeriodFrom;
+                    $referencePrice = $this->lowestPriceCalculator->calculate(
                         $productId,
                         $websiteId,
                         $customerGroupId,
@@ -94,6 +126,16 @@ class PriceHistory
                     $promotionStartedAt = $previous['promotion_started_at'];
                     $periodFrom = $previous['period_from'];
                     $periodTo = $previous['period_to'];
+                }
+                $historicalLowest = $this->lowestPriceCalculator->calculate(
+                    $productId,
+                    $websiteId,
+                    $customerGroupId,
+                    $rollingPeriodFrom,
+                    $rollingPeriodTo
+                );
+                if ($historicalLowest !== null) {
+                    $rollingLowestPrice = min($rollingLowestPrice, $historicalLowest);
                 }
             }
 
@@ -117,13 +159,14 @@ class PriceHistory
                 'regular_price' => $regularPrice,
                 'current_price' => $effectivePrice,
                 'reference_price' => $referencePrice,
+                'lowest_price' => $rollingLowestPrice,
                 'promotion_started_at' => $promotionStartedAt,
                 'period_from' => $periodFrom,
                 'period_to' => $periodTo,
                 'has_active_discount' => (int)$activeDiscount,
                 'calculated_at' => $now,
             ], [
-                'currency_code', 'regular_price', 'current_price', 'reference_price',
+                'currency_code', 'regular_price', 'current_price', 'reference_price', 'lowest_price',
                 'promotion_started_at', 'period_from', 'period_to', 'has_active_discount', 'calculated_at',
             ]);
             $this->connection->commit();
@@ -131,24 +174,6 @@ class PriceHistory
             $this->connection->rollBack();
             throw $exception;
         }
-    }
-
-    public function findLowestPrice(
-        int $productId,
-        int $websiteId,
-        int $customerGroupId,
-        string $periodFrom,
-        string $periodTo
-    ): ?float {
-        $select = $this->connection->select()
-            ->from($this->resource->getTableName(self::HISTORY_TABLE), ['lowest' => 'MIN(effective_price)'])
-            ->where('product_id = ?', $productId)
-            ->where('website_id = ?', $websiteId)
-            ->where('customer_group_id = ?', $customerGroupId)
-            ->where('valid_from < ?', $periodTo)
-            ->where('valid_to IS NULL OR valid_to > ?', $periodFrom);
-        $value = $this->connection->fetchOne($select);
-        return $value === false || $value === null ? null : (float)$value;
     }
 
     private function pricesEqual(float $first, float $second): bool

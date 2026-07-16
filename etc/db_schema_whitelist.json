@@ -1,0 +1,51 @@
+{
+    "kkkonrad_omnibus_price_history": {
+        "column": {
+            "history_id": true,
+            "product_id": true,
+            "website_id": true,
+            "customer_group_id": true,
+            "currency_code": true,
+            "regular_price": true,
+            "effective_price": true,
+            "valid_from": true,
+            "valid_to": true,
+            "change_source": true,
+            "created_at": true
+        },
+        "index": {
+            "IDX_41E511616B3BA6FC3F26695A15CA5C67": true,
+            "KKKONRAD_OMNIBUS_PRICE_HISTORY_VALID_FROM": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "KKKONRAD_OMNIBUS_PRICE_HISTORY_PRD_ID_CAT_PRD_ENTT_ENTT_ID": true,
+            "KKKONRAD_OMNIBUS_PRICE_HISTORY_WS_ID_STORE_WS_WS_ID": true
+        }
+    },
+    "kkkonrad_omnibus_price_index": {
+        "column": {
+            "product_id": true,
+            "website_id": true,
+            "customer_group_id": true,
+            "currency_code": true,
+            "regular_price": true,
+            "current_price": true,
+            "reference_price": true,
+            "lowest_price": true,
+            "promotion_started_at": true,
+            "period_from": true,
+            "period_to": true,
+            "has_active_discount": true,
+            "calculated_at": true
+        },
+        "index": {
+            "KKKONRAD_OMNIBUS_PRICE_INDEX_WEBSITE_ID_HAS_ACTIVE_DISCOUNT": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "KKKONRAD_OMNIBUS_PRICE_IDX_PRD_ID_CAT_PRD_ENTT_ENTT_ID": true,
+            "KKKONRAD_OMNIBUS_PRICE_INDEX_WEBSITE_ID_STORE_WEBSITE_WEBSITE_ID": true
+        }
+    }
+}

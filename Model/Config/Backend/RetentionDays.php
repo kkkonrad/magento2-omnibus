@@ -10,8 +10,16 @@ class RetentionDays extends Value
 {
     public function beforeSave(): self
     {
-        if ((int)$this->getValue() < 30) {
-            throw new LocalizedException(__('Price history retention must be at least 30 days.'));
+        $retentionDays = (int)$this->getValue();
+        $fieldsetData = $this->getData('fieldset_data');
+        $periodDays = is_array($fieldsetData) && isset($fieldsetData['period_days'])
+            ? (int)$fieldsetData['period_days']
+            : 30;
+
+        if ($retentionDays < max(30, $periodDays)) {
+            throw new LocalizedException(
+                __('Price history retention must not be shorter than the calculation period (%1 days).', $periodDays)
+            );
         }
         return parent::beforeSave();
     }

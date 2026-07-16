@@ -5,8 +5,12 @@
         <plugin name="kkkonrad_omnibus_append_price_message"
                 type="Kkkonrad\Omnibus\Plugin\FinalPriceBoxPlugin" sortOrder="100"/>
     </type>
-    <type name="Magento\Catalog\Model\ResourceModel\Product\Collection">
-        <plugin name="kkkonrad_omnibus_prime_product_collection"
-                type="Kkkonrad\Omnibus\Plugin\ProductCollectionPlugin" sortOrder="100"/>
+    <type name="Magento\Catalog\Block\Product\ListProduct">
+        <plugin name="kkkonrad_omnibus_prime_catalog_product_list"
+                type="Kkkonrad\Omnibus\Plugin\ProductListPlugin" sortOrder="100"/>
+    </type>
+    <type name="Magento\CatalogWidget\Block\Product\ProductsList">
+        <plugin name="kkkonrad_omnibus_prime_product_widget"
+                type="Kkkonrad\Omnibus\Plugin\ProductWidgetPlugin" sortOrder="100"/>
     </type>
 </config>

@@ -9,6 +9,7 @@
         "magento/module-backend": "*",
         "magento/module-catalog": "*",
         "magento/module-catalog-rule": "*",
+        "magento/module-catalog-widget": "*",
         "magento/module-config": "*",
         "magento/module-customer": "*",
         "magento/module-configurable-product": "*",

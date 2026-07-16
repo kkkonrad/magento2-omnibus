@@ -18,14 +18,14 @@ class ReconcileCommand extends Command
     protected function configure(): void
     {
         $this->setName('omnibus:reconcile')
-            ->setDescription('Compare the Magento price index with the Omnibus price history');
+            ->setDescription((string)__('Compare the Magento price index with the Omnibus price history'));
         parent::configure();
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->processor->execute(null, 'manual_reconciliation');
-        $output->writeln('<info>Omnibus prices reconciled.</info>');
+        $output->writeln('<info>' . __('Omnibus prices reconciled.') . '</info>');
         return Command::SUCCESS;
     }
 }

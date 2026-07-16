@@ -71,9 +71,21 @@ class History extends AbstractModifier
         if ($rows === []) {
             return '<p>' . $this->escaper->escapeHtml(__('No price history is available yet.')) . '</p>';
         }
-        $html = '<div class="admin__data-grid-wrap"><table class="data-grid">'
-            . '<thead><tr><th>Website</th><th>Group</th><th>Regular</th><th>Effective</th>'
-            . '<th>Currency</th><th>Valid from</th><th>Valid to</th><th>Source</th></tr></thead><tbody>';
+        $headers = [
+            __('Website'),
+            __('Group'),
+            __('Regular Price'),
+            __('Effective Price'),
+            __('Currency'),
+            __('Valid From'),
+            __('Valid To'),
+            __('Source'),
+        ];
+        $html = '<div class="admin__data-grid-wrap"><table class="data-grid"><thead><tr>';
+        foreach ($headers as $header) {
+            $html .= '<th>' . $this->escaper->escapeHtml($header) . '</th>';
+        }
+        $html .= '</tr></thead><tbody>';
         foreach ($rows as $row) {
             $html .= '<tr>';
             foreach (['website_id', 'customer_group_id', 'regular_price', 'effective_price',

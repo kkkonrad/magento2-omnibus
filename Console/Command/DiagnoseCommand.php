@@ -21,7 +21,7 @@ class DiagnoseCommand extends Command
     protected function configure(): void
     {
         $this->setName('omnibus:diagnose')
-            ->setDescription('Report Omnibus configuration and index completeness');
+            ->setDescription((string)__('Report Omnibus configuration and index completeness'));
         parent::configure();
     }
 
@@ -36,13 +36,13 @@ class DiagnoseCommand extends Command
         $historyCount = (int)$connection->fetchOne($connection->select()->from($history, ['COUNT(*)']));
         $missing = max(0, $sourceCount - $indexCount);
 
-        $output->writeln('Enabled: ' . ($this->config->isEnabled() ? 'yes' : 'no'));
-        $output->writeln('Calculation period: ' . $this->config->getPeriodDays() . ' days');
-        $output->writeln('Retention: ' . $this->config->getRetentionDays() . ' days');
-        $output->writeln('Magento price index rows: ' . $sourceCount);
-        $output->writeln('Omnibus index rows: ' . $indexCount);
-        $output->writeln('Omnibus history rows: ' . $historyCount);
-        $output->writeln('Potentially missing contexts: ' . $missing);
+        $output->writeln((string)__('Enabled: %1', $this->config->isEnabled() ? __('yes') : __('no')));
+        $output->writeln((string)__('Calculation period: %1 days', $this->config->getPeriodDays()));
+        $output->writeln((string)__('Retention: %1 days', $this->config->getRetentionDays()));
+        $output->writeln((string)__('Magento price index rows: %1', $sourceCount));
+        $output->writeln((string)__('Omnibus index rows: %1', $indexCount));
+        $output->writeln((string)__('Omnibus history rows: %1', $historyCount));
+        $output->writeln((string)__('Potentially missing contexts: %1', $missing));
         return $missing === 0 ? Command::SUCCESS : Command::FAILURE;
     }
 }

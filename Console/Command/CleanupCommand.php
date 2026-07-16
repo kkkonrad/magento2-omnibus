@@ -18,14 +18,14 @@ class CleanupCommand extends Command
     protected function configure(): void
     {
         $this->setName('omnibus:history:cleanup')
-            ->setDescription('Remove expired closed Omnibus price history records');
+            ->setDescription((string)__('Remove expired closed Omnibus price history records'));
         parent::configure();
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $deleted = $this->cleaner->execute();
-        $output->writeln(sprintf('<info>Removed %d expired history record(s).</info>', $deleted));
+        $output->writeln('<info>' . __('Removed %1 expired history record(s).', $deleted) . '</info>');
         return Command::SUCCESS;
     }
 }

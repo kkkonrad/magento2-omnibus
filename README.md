@@ -27,7 +27,7 @@ bin/magento cache:clean
 bin/magento indexer:reindex catalog_product_price kkkonrad_omnibus_price
 ```
 
-Configuration is available under **Stores > Configuration > Catalog >
+Configuration is available under **Stores > Configuration > Kkkonrad >
 Omnibus Price**. The history retention setting must be at least as long as the
 calculation period.
 

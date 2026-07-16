@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Cron:etc/crontab.xsd">
+    <group id="default">
+        <job name="kkkonrad_omnibus_reconcile" instance="Kkkonrad\Omnibus\Cron\ReconcilePrices" method="execute">
+            <schedule>17 * * * *</schedule>
+        </job>
+        <job name="kkkonrad_omnibus_cleanup" instance="Kkkonrad\Omnibus\Cron\CleanupHistory" method="execute">
+            <schedule>31 2 * * *</schedule>
+        </job>
+    </group>
+</config>

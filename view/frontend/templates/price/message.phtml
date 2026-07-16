@@ -1,0 +1,9 @@
+<?php
+/** @var \Kkkonrad\Omnibus\Block\PriceMessage $block */
+$message = $block->getMessage();
+?>
+<?php if ($message !== ''): ?>
+    <div class="kkkonrad-omnibus-price text-sm text-gray-600 mt-1" data-omnibus-price>
+        <?= /* @noEscape */ $message ?>
+    </div>
+<?php endif; ?>

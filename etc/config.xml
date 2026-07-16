@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <kkkonrad_omnibus>
+            <general>
+                <enabled>1</enabled>
+                <period_days>30</period_days>
+                <retention_days>365</retention_days>
+                <display_place>product_category</display_place>
+                <display_mode>discounted</display_mode>
+                <hide_equal>1</hide_equal>
+                <label>Najniższa cena z {days} dni przed obniżką: {omnibus_price}</label>
+            </general>
+        </kkkonrad_omnibus>
+    </default>
+</config>

@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Kkkonrad\Omnibus\Api\OmnibusPriceProviderInterface"
+                type="Kkkonrad\Omnibus\Model\OmnibusPriceProvider"/>
+    <type name="Magento\Catalog\Model\Indexer\Product\Price">
+        <plugin name="kkkonrad_omnibus_capture_after_price_index"
+                type="Kkkonrad\Omnibus\Plugin\CatalogPriceIndexerPlugin" sortOrder="100"/>
+    </type>
+    <type name="Magento\Catalog\Api\ProductRepositoryInterface">
+        <plugin name="kkkonrad_omnibus_product_api_data"
+                type="Kkkonrad\Omnibus\Plugin\ProductRepositoryPlugin" sortOrder="100"/>
+    </type>
+    <type name="Magento\Framework\Console\CommandList">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="kkkonrad_omnibus_reconcile" xsi:type="object">Kkkonrad\Omnibus\Console\Command\ReconcileCommand</item>
+                <item name="kkkonrad_omnibus_cleanup" xsi:type="object">Kkkonrad\Omnibus\Console\Command\CleanupCommand</item>
+            </argument>
+        </arguments>
+    </type>
+</config>

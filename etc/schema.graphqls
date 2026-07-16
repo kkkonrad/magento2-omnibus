@@ -1,0 +1,12 @@
+type OmnibusPrice {
+    current_price: Float!
+    reference_price: Float
+    currency_code: String!
+    period_days: Int!
+    promotion_started_at: String
+    has_active_discount: Boolean!
+}
+
+interface ProductInterface {
+    omnibus_price: OmnibusPrice @resolver(class: "Kkkonrad\\Omnibus\\Model\\Resolver\\OmnibusPrice")
+}

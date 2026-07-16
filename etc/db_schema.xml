@@ -1,0 +1,81 @@
+<?xml version="1.0"?>
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="kkkonrad_omnibus_price_history" resource="default" engine="innodb"
+           comment="Kkkonrad Omnibus Effective Price History">
+        <column xsi:type="bigint" name="history_id" unsigned="true" nullable="false" identity="true"
+                comment="History ID"/>
+        <column xsi:type="int" name="product_id" unsigned="true" nullable="false" comment="Product ID"/>
+        <column xsi:type="smallint" name="website_id" unsigned="true" nullable="false" comment="Website ID"/>
+        <column xsi:type="int" name="customer_group_id" unsigned="true" nullable="false"
+                comment="Customer Group ID"/>
+        <column xsi:type="varchar" name="currency_code" nullable="false" length="3" comment="Currency Code"/>
+        <column xsi:type="decimal" name="regular_price" scale="4" precision="20" unsigned="true" nullable="false"
+                comment="Regular Price"/>
+        <column xsi:type="decimal" name="effective_price" scale="4" precision="20" unsigned="true" nullable="false"
+                comment="Effective Price"/>
+        <column xsi:type="timestamp" name="valid_from" on_update="false" nullable="false"
+                default="CURRENT_TIMESTAMP" comment="Valid From"/>
+        <column xsi:type="timestamp" name="valid_to" on_update="false" nullable="true" comment="Valid To"/>
+        <column xsi:type="varchar" name="change_source" nullable="false" length="32" default="indexer"
+                comment="Change Source"/>
+        <column xsi:type="timestamp" name="created_at" on_update="false" nullable="false"
+                default="CURRENT_TIMESTAMP" comment="Created At"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="history_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="KKKONRAD_OMNIBUS_HIST_PRODUCT_ID_CATALOG_PRODUCT_ENTITY_ENTITY_ID"
+                    table="kkkonrad_omnibus_price_history" column="product_id"
+                    referenceTable="catalog_product_entity" referenceColumn="entity_id" onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="KKKONRAD_OMNIBUS_HIST_WEBSITE_ID_STORE_WEBSITE_WEBSITE_ID"
+                    table="kkkonrad_omnibus_price_history" column="website_id"
+                    referenceTable="store_website" referenceColumn="website_id" onDelete="CASCADE"/>
+        <index referenceId="KKKONRAD_OMNIBUS_HIST_PRODUCT_CONTEXT_FROM" indexType="btree">
+            <column name="product_id"/>
+            <column name="website_id"/>
+            <column name="customer_group_id"/>
+            <column name="valid_from"/>
+        </index>
+        <index referenceId="KKKONRAD_OMNIBUS_HIST_VALID_FROM" indexType="btree">
+            <column name="valid_from"/>
+        </index>
+    </table>
+
+    <table name="kkkonrad_omnibus_price_index" resource="default" engine="innodb"
+           comment="Kkkonrad Omnibus Materialized Price Index">
+        <column xsi:type="int" name="product_id" unsigned="true" nullable="false" comment="Product ID"/>
+        <column xsi:type="smallint" name="website_id" unsigned="true" nullable="false" comment="Website ID"/>
+        <column xsi:type="int" name="customer_group_id" unsigned="true" nullable="false"
+                comment="Customer Group ID"/>
+        <column xsi:type="varchar" name="currency_code" nullable="false" length="3" comment="Currency Code"/>
+        <column xsi:type="decimal" name="regular_price" scale="4" precision="20" unsigned="true" nullable="false"
+                comment="Regular Price"/>
+        <column xsi:type="decimal" name="current_price" scale="4" precision="20" unsigned="true" nullable="false"
+                comment="Current Effective Price"/>
+        <column xsi:type="decimal" name="reference_price" scale="4" precision="20" unsigned="true" nullable="true"
+                comment="Lowest Price Before Reduction"/>
+        <column xsi:type="timestamp" name="promotion_started_at" on_update="false" nullable="true"
+                comment="Promotion Started At"/>
+        <column xsi:type="timestamp" name="period_from" on_update="false" nullable="true" comment="Calculation From"/>
+        <column xsi:type="timestamp" name="period_to" on_update="false" nullable="true" comment="Calculation To"/>
+        <column xsi:type="smallint" name="has_active_discount" unsigned="true" nullable="false" default="0"
+                comment="Has Active Discount"/>
+        <column xsi:type="timestamp" name="calculated_at" on_update="false" nullable="false"
+                default="CURRENT_TIMESTAMP" comment="Calculated At"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="product_id"/>
+            <column name="website_id"/>
+            <column name="customer_group_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="KKKONRAD_OMNIBUS_IDX_PRODUCT_ID_CATALOG_PRODUCT_ENTITY_ENTITY_ID"
+                    table="kkkonrad_omnibus_price_index" column="product_id"
+                    referenceTable="catalog_product_entity" referenceColumn="entity_id" onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="KKKONRAD_OMNIBUS_IDX_WEBSITE_ID_STORE_WEBSITE_WEBSITE_ID"
+                    table="kkkonrad_omnibus_price_index" column="website_id"
+                    referenceTable="store_website" referenceColumn="website_id" onDelete="CASCADE"/>
+        <index referenceId="KKKONRAD_OMNIBUS_IDX_DISCOUNT" indexType="btree">
+            <column name="website_id"/>
+            <column name="has_active_discount"/>
+        </index>
+    </table>
+</schema>

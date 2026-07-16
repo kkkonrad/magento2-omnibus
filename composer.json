@@ -1,0 +1,25 @@
+{
+    "name": "kkkonrad/module-omnibus",
+    "description": "Kkkonrad Omnibus price history and lowest prior price module for Magento 2",
+    "type": "magento2-module",
+    "license": "OSL-3.0",
+    "require": {
+        "php": ">=8.3",
+        "magento/framework": "*",
+        "magento/module-backend": "*",
+        "magento/module-catalog": "*",
+        "magento/module-catalog-rule": "*",
+        "magento/module-config": "*",
+        "magento/module-customer": "*",
+        "magento/module-graph-ql": "*",
+        "magento/module-indexer": "*",
+        "magento/module-store": "*",
+        "magento/module-ui": "*"
+    },
+    "autoload": {
+        "files": ["registration.php"],
+        "psr-4": {
+            "Kkkonrad\\Omnibus\\": ""
+        }
+    }
+}

@@ -52,7 +52,8 @@ class PriceMessage extends Template
 
     public function getPriceData(): ?OmnibusPriceInterface
     {
-        if (!$this->product || (bool)$this->product->getCustomAttribute('hide_omnibus_price')?->getValue()) {
+        $product = $this->getProduct();
+        if (!$product || (bool)$product->getCustomAttribute('hide_omnibus_price')?->getValue()) {
             return null;
         }
         $websiteId = (int)$this->storeManager->getStore()->getWebsiteId();
@@ -60,7 +61,7 @@ class PriceMessage extends Template
         if (in_array($groupId, $this->config->getHiddenCustomerGroupIds(), true)) {
             return null;
         }
-        $price = $this->priceProvider->get((int)$this->product->getId(), $websiteId, $groupId);
+        $price = $this->priceProvider->get((int)$product->getId(), $websiteId, $groupId);
         if (!$price || !$this->shouldShowPrice($price)) {
             return null;
         }
@@ -79,12 +80,13 @@ class PriceMessage extends Template
     /** @return array<int, string> */
     public function getVariantMessages(): array
     {
+        $product = $this->getProduct();
         if (!$this->config->shouldDisplayChildPrices()
-            || !$this->product
-            || $this->product->getTypeId() !== Configurable::TYPE_CODE) {
+            || !$product
+            || $product->getTypeId() !== Configurable::TYPE_CODE) {
             return [];
         }
-        $children = $this->configurableType->getUsedProducts($this->product);
+        $children = $this->configurableType->getUsedProducts($product);
         if ($children === []) {
             return [];
         }
@@ -108,16 +110,17 @@ class PriceMessage extends Template
     {
         $reference = (float)$this->getDisplayReference($price);
         $current = $price->getCurrentPrice();
-        if ($this->product) {
+        $product = $this->getProduct();
+        if ($product) {
             $displayType = $this->taxConfig->getPriceDisplayType($this->storeManager->getStore());
             $includingTax = $displayType !== TaxConfig::DISPLAY_TYPE_EXCLUDING_TAX;
             $reference = (float)$this->catalogHelper->getTaxPrice(
-                $this->product,
+                $product,
                 $reference,
                 $includingTax
             );
             $current = (float)$this->catalogHelper->getTaxPrice(
-                $this->product,
+                $product,
                 $current,
                 $includingTax
             );

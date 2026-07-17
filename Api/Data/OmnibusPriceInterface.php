@@ -14,19 +14,59 @@ interface OmnibusPriceInterface
     public const HAS_ACTIVE_DISCOUNT = 'has_active_discount';
     public const MESSAGE = 'message';
 
+    /**
+     * Return the current effective price.
+     *
+     * @return float
+     */
     public function getCurrentPrice(): float;
 
+    /**
+     * Return the price before an active promotion.
+     *
+     * @return float|null
+     */
     public function getReferencePrice(): ?float;
 
+    /**
+     * Return the lowest price in the configured period.
+     *
+     * @return float|null
+     */
     public function getLowestPrice(): ?float;
 
+    /**
+     * Return the website currency code.
+     *
+     * @return string
+     */
     public function getCurrencyCode(): string;
 
+    /**
+     * Return the calculation period in days.
+     *
+     * @return int
+     */
     public function getPeriodDays(): int;
 
+    /**
+     * Return the active promotion start date.
+     *
+     * @return string|null
+     */
     public function getPromotionStartedAt(): ?string;
 
+    /**
+     * Check whether a discount is currently active.
+     *
+     * @return bool
+     */
     public function hasActiveDiscount(): bool;
 
+    /**
+     * Return the formatted storefront message.
+     *
+     * @return string
+     */
     public function getMessage(): string;
 }

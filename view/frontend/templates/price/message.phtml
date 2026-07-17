@@ -9,6 +9,7 @@ $variantMessages = $block->getVariantMessages();
          data-parent-id="<?= (int)$block->getProduct()->getId() ?>"
          data-initial-message="<?= $escaper->escapeHtmlAttr($message) ?>"
          data-variant-messages="<?= $escaper->escapeHtmlAttr(json_encode($variantMessages)) ?>"
+         data-mage-init='{"Kkkonrad_Omnibus/js/price-message": {}}'
          x-data="initKkkonradOmnibusPrice"
          x-bind="eventListeners"
          x-show="isVisible">

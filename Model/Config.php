@@ -42,10 +42,19 @@ class Config
         return $this->scopeConfig->isSetFlag(self::XML_PREFIX . 'auto_clean');
     }
 
-    public function getDisplayPlace(?int $storeId = null): string
+    public function shouldDisplayOnProduct(?int $storeId = null): bool
     {
-        return (string)$this->scopeConfig->getValue(
-            self::XML_PREFIX . 'display_place',
+        return $this->scopeConfig->isSetFlag(
+            self::XML_PREFIX . 'display_on_product',
+            ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    public function shouldDisplayOnListing(?int $storeId = null): bool
+    {
+        return $this->scopeConfig->isSetFlag(
+            self::XML_PREFIX . 'display_on_listing',
             ScopeInterface::SCOPE_STORE,
             $storeId
         );

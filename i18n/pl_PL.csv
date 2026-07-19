@@ -52,6 +52,8 @@
 "Must not be shorter than the calculation period.","Nie może być krótszy niż okres obliczeniowy."
 "Automatic History Cleanup","Automatyczne czyszczenie historii"
 "Display Omnibus Price On","Wyświetlaj cenę Omnibus na"
+"Display on Product Pages","Wyświetlaj na stronach produktów"
+"Display on Product Listings and Category Pages","Wyświetlaj na listach produktów i stronach kategorii"
 "Display Mode","Tryb wyświetlania"
 "Hide When Lowest Price Matches Current Price","Ukryj, gdy najniższa cena jest równa obecnej"
 "Frontend Label","Etykieta na frontendzie"

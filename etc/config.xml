@@ -8,7 +8,8 @@
                 <period_days>30</period_days>
                 <retention_days>365</retention_days>
                 <auto_clean>1</auto_clean>
-                <display_place>product_category</display_place>
+                <display_on_product>1</display_on_product>
+                <display_on_listing>0</display_on_listing>
                 <display_mode>discounted</display_mode>
                 <hide_equal>1</hide_equal>
                 <display_child_prices>1</display_child_prices>

@@ -136,7 +136,8 @@ Konfiguracja znajduje się w:
 | Calculation Period in Days | 30 | website | Okres używany do obliczania najniższej ceny. Minimalna wartość to 30. |
 | History Retention in Days | 365 | default | Czas przechowywania zamkniętych wpisów historii. Nie może być krótszy niż okres obliczeniowy. |
 | Automatic History Cleanup | Yes | default | Włącza codzienne usuwanie wygasłych, zamkniętych wpisów. |
-| Display Omnibus Price On | Product and Category Pages | store view | Określa miejsca prezentacji komunikatu. |
+| Display on Product Pages | Yes | store view | Niezależnie włącza komunikat na stronie produktu. |
+| Display on Product Listings and Category Pages | No | store view | Niezależnie włącza komunikat na listach, stronach kategorii i w widgetach produktowych. |
 | Display Mode | Discounted Products | store view | Wyświetla dane tylko dla obniżek albo dla wszystkich produktów. |
 | Hide When Lowest Price Matches Current Price | Yes | store view | Ukrywa komunikat, jeżeli cena najniższa jest równa obecnej. |
 | Frontend Label | tekst Omnibus | store view | Szablon komunikatu widocznego na frontendzie. |
@@ -523,7 +524,7 @@ bin/magento omnibus:diagnose
 Następnie zweryfikuj:
 
 - czy moduł jest włączony dla witryny;
-- czy miejsce wyświetlania obejmuje stronę produktu;
+- czy włączono wyświetlanie dla danego miejsca: strony produktu albo listy/kategorii;
 - czy produkt nie ma włączonego `hide_omnibus_price`;
 - czy grupa klienta nie jest wykluczona;
 - czy aktywny tryb wymaga obniżki;

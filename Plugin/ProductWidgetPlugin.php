@@ -5,7 +5,6 @@ namespace Kkkonrad\Omnibus\Plugin;
 
 use Kkkonrad\Omnibus\Model\CollectionPrimer;
 use Kkkonrad\Omnibus\Model\Config;
-use Kkkonrad\Omnibus\Model\Config\Source\DisplayPlace;
 use Magento\Catalog\Model\ResourceModel\Product\Collection;
 use Magento\CatalogWidget\Block\Product\ProductsList;
 
@@ -19,7 +18,7 @@ class ProductWidgetPlugin
 
     public function afterCreateCollection(ProductsList $subject, Collection $collection): Collection
     {
-        if ($this->config->getDisplayPlace() === DisplayPlace::PRODUCT_CATEGORY) {
+        if ($this->config->shouldDisplayOnListing()) {
             $this->primer->execute($collection);
         }
         return $collection;

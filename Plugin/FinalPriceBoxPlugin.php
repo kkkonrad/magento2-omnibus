@@ -5,7 +5,6 @@ namespace Kkkonrad\Omnibus\Plugin;
 
 use Kkkonrad\Omnibus\Block\PriceMessage;
 use Kkkonrad\Omnibus\Model\Config;
-use Kkkonrad\Omnibus\Model\Config\Source\DisplayPlace;
 use Magento\Catalog\Pricing\Render\FinalPriceBox;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\View\LayoutInterface;
@@ -21,11 +20,9 @@ class FinalPriceBoxPlugin
 
     public function afterToHtml(FinalPriceBox $subject, string $html): string
     {
-        $displayPlace = $this->config->getDisplayPlace();
-        if ($displayPlace === DisplayPlace::NONE) {
-            return $html;
-        }
-        if ($displayPlace === DisplayPlace::PRODUCT && $this->request->getFullActionName() !== 'catalog_product_view') {
+        $isProductPage = $this->request->getFullActionName() === 'catalog_product_view';
+        if (($isProductPage && !$this->config->shouldDisplayOnProduct())
+            || (!$isProductPage && !$this->config->shouldDisplayOnListing())) {
             return $html;
         }
         $product = $subject->getSaleableItem();

@@ -5,7 +5,6 @@ namespace Kkkonrad\Omnibus\Plugin;
 
 use Kkkonrad\Omnibus\Block\PriceMessage;
 use Kkkonrad\Omnibus\Model\Config;
-use Kkkonrad\Omnibus\Model\Config\Source\DisplayPlace;
 use Magento\Catalog\Block\Product\Price;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
 use Magento\Framework\App\RequestInterface;
@@ -23,7 +22,7 @@ class ProductPricePlugin
     public function afterToHtml(Price $subject, string $html): string
     {
         if ($this->request->getFullActionName() !== 'catalog_product_view'
-            || $this->config->getDisplayPlace() === DisplayPlace::NONE) {
+            || !$this->config->shouldDisplayOnProduct()) {
             return $html;
         }
         $product = $subject->getProduct();

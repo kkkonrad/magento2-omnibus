@@ -8,6 +8,7 @@ use Kkkonrad\Omnibus\Model\Config;
 use Magento\Catalog\Block\Product\Price;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
 use Magento\Framework\App\RequestInterface;
+use Magento\Framework\Registry;
 use Magento\Framework\View\LayoutInterface;
 
 class ProductPricePlugin
@@ -15,7 +16,8 @@ class ProductPricePlugin
     public function __construct(
         private readonly LayoutInterface $layout,
         private readonly Config $config,
-        private readonly RequestInterface $request
+        private readonly RequestInterface $request,
+        private readonly Registry $registry
     ) {
     }
 
@@ -26,7 +28,12 @@ class ProductPricePlugin
             return $html;
         }
         $product = $subject->getProduct();
-        if (!$product || !$product->getId() || $product->getTypeId() === Configurable::TYPE_CODE) {
+        $currentProduct = $this->registry->registry('current_product');
+        if (!$product
+            || !$product->getId()
+            || !$currentProduct
+            || (int)$currentProduct->getId() !== (int)$product->getId()
+            || $product->getTypeId() === Configurable::TYPE_CODE) {
             return $html;
         }
         /** @var PriceMessage $block */

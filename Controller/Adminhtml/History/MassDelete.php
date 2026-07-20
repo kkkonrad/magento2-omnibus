@@ -42,21 +42,16 @@ class MassDelete extends Action implements HttpPostActionInterface
                 throw new LocalizedException(__('Please select valid price history records.'));
             }
 
-            if (is_array($selected)) {
-                $ids = array_values(array_unique(array_filter(
-                    $selected,
-                    static fn($id): bool => is_scalar($id) && ctype_digit((string)$id) && (int)$id > 0
-                )));
-                if ($ids === [] || count($ids) !== count($selected)) {
-                    throw new LocalizedException(__('Please select valid price history records.'));
-                }
-                $collection = $this->collectionFactory->create();
-                $collection->addFieldToFilter('history_id', ['in' => array_map('intval', $ids)]);
-            } elseif (is_array($excluded)) {
-                $collection = $this->filter->getCollection($this->collectionFactory->create());
-            } else {
+            if (is_array($selected) && array_filter(
+                $selected,
+                static fn($id): bool => !is_scalar($id) || !ctype_digit((string)$id) || (int)$id <= 0
+            )) {
                 throw new LocalizedException(__('Please select valid price history records.'));
             }
+
+            $collection = $this->filter->getCollection($this->collectionFactory->create());
+            $selectedCount = $collection->getSize();
+            $collection->addFieldToFilter('valid_to', ['notnull' => true]);
 
             $deleted = 0;
             foreach ($collection as $record) {
@@ -64,6 +59,12 @@ class MassDelete extends Action implements HttpPostActionInterface
                 ++$deleted;
             }
             $this->messageManager->addSuccessMessage(__('Deleted %1 price history record(s).', $deleted));
+            $protected = max(0, $selectedCount - $deleted);
+            if ($protected > 0) {
+                $this->messageManager->addWarningMessage(
+                    __('Skipped %1 active price history record(s).', $protected)
+                );
+            }
         } catch (LocalizedException $exception) {
             $this->messageManager->addErrorMessage($exception->getMessage());
         }

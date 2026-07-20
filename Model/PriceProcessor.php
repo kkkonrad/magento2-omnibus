@@ -5,21 +5,45 @@ namespace Kkkonrad\Omnibus\Model;
 
 use Kkkonrad\Omnibus\Model\ResourceModel\PriceHistory;
 use Magento\Framework\App\ResourceConnection;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Lock\LockManagerInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Psr\Log\LoggerInterface;
 
 class PriceProcessor
 {
+    public const LOCK_NAME = 'kkkonrad_omnibus_price_processing';
+
     public function __construct(
         private readonly ResourceConnection $resource,
         private readonly StoreManagerInterface $storeManager,
         private readonly PriceHistory $priceHistory,
-        private readonly LoggerInterface $logger
+        private readonly LoggerInterface $logger,
+        private readonly LockManagerInterface $lockManager
     ) {
     }
 
     /** @param int[]|null $productIds */
-    public function execute(?array $productIds = null, string $source = 'indexer'): void
+    public function execute(
+        ?array $productIds = null,
+        string $source = 'indexer',
+        bool $acquireLock = true
+    ): int {
+        if ($acquireLock && !$this->lockManager->lock(self::LOCK_NAME, 30)) {
+            throw new LocalizedException(__('Another Omnibus price operation is already running.'));
+        }
+
+        try {
+            return $this->process($productIds, $source);
+        } finally {
+            if ($acquireLock) {
+                $this->lockManager->unlock(self::LOCK_NAME);
+            }
+        }
+    }
+
+    /** @param int[]|null $productIds */
+    private function process(?array $productIds, string $source): int
     {
         $connection = $this->resource->getConnection();
         $select = $connection->select()->from(
@@ -29,11 +53,12 @@ class PriceProcessor
         if ($productIds !== null) {
             $productIds = array_values(array_unique(array_map('intval', $productIds)));
             if ($productIds === []) {
-                return;
+                return 0;
             }
             $select->where('entity_id IN (?)', $productIds);
         }
 
+        $failed = 0;
         foreach ($connection->fetchAll($select) as $row) {
             try {
                 $websiteId = (int)$row['website_id'];
@@ -48,11 +73,14 @@ class PriceProcessor
                     $source
                 );
             } catch (\Throwable $exception) {
+                ++$failed;
                 $this->logger->error('Unable to record Omnibus price.', [
                     'row' => $row,
                     'exception' => $exception,
                 ]);
             }
         }
+
+        return $failed;
     }
 }

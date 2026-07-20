@@ -3,7 +3,7 @@
 $message = $block->getMessage();
 $variantMessages = $block->getVariantMessages();
 ?>
-<?php if ($message !== ''): ?>
+<?php if ($message !== '' || $variantMessages !== []): ?>
     <div class="kkkonrad-omnibus-price text-sm text-gray-600 mt-1"
          data-omnibus-price
          data-parent-id="<?= (int)$block->getProduct()->getId() ?>"

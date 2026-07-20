@@ -24,7 +24,11 @@ class ReconcileCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->processor->execute(null, 'manual_reconciliation');
+        $failed = $this->processor->execute(null, 'manual_reconciliation');
+        if ($failed > 0) {
+            $output->writeln('<error>' . __('Unable to reconcile %1 Omnibus price context(s).', $failed) . '</error>');
+            return Command::FAILURE;
+        }
         $output->writeln('<info>' . __('Omnibus prices reconciled.') . '</info>');
         return Command::SUCCESS;
     }

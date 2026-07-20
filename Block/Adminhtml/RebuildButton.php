@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Kkkonrad\Omnibus\Block\Adminhtml;
 
 use Magento\Backend\Block\Template;
+use Magento\Framework\AuthorizationInterface;
 use Magento\Framework\Data\Form\FormKey;
 
 class RebuildButton extends Template
@@ -11,6 +12,7 @@ class RebuildButton extends Template
     public function __construct(
         Template\Context $context,
         private readonly FormKey $formKeyModel,
+        private readonly AuthorizationInterface $authorization,
         array $data = []
     ) {
         parent::__construct($context, $data);
@@ -24,5 +26,10 @@ class RebuildButton extends Template
     public function getFormKeyValue(): string
     {
         return $this->formKeyModel->getFormKey();
+    }
+
+    public function canRebuild(): bool
+    {
+        return $this->authorization->isAllowed('Kkkonrad_Omnibus::rebuild');
     }
 }

@@ -33,4 +33,18 @@ class ConfigTest extends TestCase
 
         self::assertFalse((new Config($scopeConfig))->shouldDisplayOnListing(3));
     }
+
+    public function testRetentionNeverFallsBelowWebsitePeriod(): void
+    {
+        $scopeConfig = $this->createMock(ScopeConfigInterface::class);
+        $scopeConfig->method('getValue')->willReturnCallback(
+            static fn(string $path, ?string $scope = null, mixed $scopeCode = null): int => match ($path) {
+                'kkkonrad_omnibus/general/period_days' => 90,
+                'kkkonrad_omnibus/general/retention_days' => 60,
+                default => 0,
+            }
+        );
+
+        self::assertSame(90, (new Config($scopeConfig))->getRetentionDays(4));
+    }
 }

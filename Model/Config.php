@@ -32,9 +32,17 @@ class Config
         ));
     }
 
-    public function getRetentionDays(): int
+    public function getRetentionDays(?int $websiteId = null): int
     {
-        return max($this->getPeriodDays(), (int)$this->scopeConfig->getValue(self::XML_PREFIX . 'retention_days'));
+        return max(
+            $this->getPeriodDays($websiteId),
+            $this->getConfiguredRetentionDays()
+        );
+    }
+
+    public function getConfiguredRetentionDays(): int
+    {
+        return max(1, (int)$this->scopeConfig->getValue(self::XML_PREFIX . 'retention_days'));
     }
 
     public function isAutoCleaningEnabled(): bool

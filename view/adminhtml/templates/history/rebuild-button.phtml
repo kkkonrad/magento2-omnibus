@@ -1,6 +1,7 @@
 <?php
 /** @var \Kkkonrad\Omnibus\Block\Adminhtml\RebuildButton $block */
 ?>
+<?php if ($block->canRebuild()): ?>
 <div class="page-main-actions">
     <form method="post" action="<?= $escaper->escapeUrl($block->getRebuildUrl()) ?>"
           onsubmit="return confirm('<?= $escaper->escapeJs(__('This will delete all price history and create a new baseline. Continue?')) ?>')">
@@ -10,3 +11,4 @@
         </button>
     </form>
 </div>
+<?php endif; ?>

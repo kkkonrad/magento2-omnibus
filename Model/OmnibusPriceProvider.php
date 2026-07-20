@@ -9,17 +9,20 @@ use Kkkonrad\Omnibus\Model\Data\OmnibusPriceFactory;
 use Magento\Framework\App\ResourceConnection;
 use Kkkonrad\Omnibus\Model\Config\Source\DisplayMode;
 use Magento\Framework\Escaper;
+use Magento\Store\Model\StoreManagerInterface;
 
 class OmnibusPriceProvider implements OmnibusPriceProviderInterface
 {
-    /** @var array<int, array<int, array<int, OmnibusPriceInterface|null>>> */
+    /** @var array<int, array<int, array<int, array<int, OmnibusPriceInterface|null>>>> */
     private array $cache = [];
 
     public function __construct(
         private readonly ResourceConnection $resource,
         private readonly OmnibusPriceFactory $priceFactory,
         private readonly Config $config,
-        private readonly Escaper $escaper
+        private readonly Escaper $escaper,
+        private readonly StoreManagerInterface $storeManager,
+        private readonly PercentageFormatter $percentageFormatter
     ) {
     }
 
@@ -34,17 +37,18 @@ class OmnibusPriceProvider implements OmnibusPriceProviderInterface
         if ($productIds === [] || !$this->config->isEnabled($websiteId)) {
             return [];
         }
+        $storeId = (int)$this->storeManager->getStore()->getId();
 
         $missingIds = array_values(array_filter(
             $productIds,
             fn(int $productId): bool => !array_key_exists(
                 $productId,
-                $this->cache[$websiteId][$customerGroupId] ?? []
+                $this->cache[$websiteId][$customerGroupId][$storeId] ?? []
             )
         ));
         if ($missingIds === []) {
             return array_filter(array_intersect_key(
-                $this->cache[$websiteId][$customerGroupId],
+                $this->cache[$websiteId][$customerGroupId][$storeId],
                 array_flip($productIds)
             ));
         }
@@ -57,26 +61,25 @@ class OmnibusPriceProvider implements OmnibusPriceProviderInterface
             ->where('customer_group_id = ?', $customerGroupId);
 
         foreach ($missingIds as $missingId) {
-            $this->cache[$websiteId][$customerGroupId][$missingId] = null;
+            $this->cache[$websiteId][$customerGroupId][$storeId][$missingId] = null;
         }
         foreach ($connection->fetchAll($select) as $row) {
             $productId = (int)$row['product_id'];
-            $reference = $this->config->getDisplayMode() === DisplayMode::ALL
+            $reference = $this->config->getDisplayMode($storeId) === DisplayMode::ALL
                 ? $row['lowest_price']
                 : $row['reference_price'];
             $percentage = $reference !== null && (float)$reference > 0
                 ? (((float)$reference - (float)$row['current_price']) / (float)$reference) * 100
                 : 0.0;
             $message = $reference !== null ? strtr($this->escaper->escapeHtml(
-                $this->config->getLabel(),
+                $this->config->getLabel($storeId),
                 ['span', 'i', 'u', 'b']
             ), [
                 '{days}' => (string)$this->config->getPeriodDays($websiteId),
                 '{omnibus_price}' => number_format((float)$reference, 2) . ' ' . (string)$row['currency_code'],
-                '{percentage}' => ($percentage > 0 ? '-' : ($percentage < 0 ? '+' : ''))
-                    . number_format(abs($percentage), 0) . '%',
+                '{percentage}' => $this->percentageFormatter->format($percentage, $storeId),
             ]) : '';
-            $this->cache[$websiteId][$customerGroupId][$productId] = $this->priceFactory->create(['data' => [
+            $this->cache[$websiteId][$customerGroupId][$storeId][$productId] = $this->priceFactory->create(['data' => [
                 OmnibusPriceInterface::CURRENT_PRICE => (float)$row['current_price'],
                 OmnibusPriceInterface::REFERENCE_PRICE => $row['reference_price'] !== null
                     ? (float)$row['reference_price']
@@ -92,8 +95,9 @@ class OmnibusPriceProvider implements OmnibusPriceProviderInterface
             ]]);
         }
         return array_filter(array_intersect_key(
-            $this->cache[$websiteId][$customerGroupId],
+            $this->cache[$websiteId][$customerGroupId][$storeId],
             array_flip($productIds)
         ));
     }
+
 }

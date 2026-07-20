@@ -7,7 +7,7 @@ use Kkkonrad\Omnibus\Api\Data\OmnibusPriceInterface;
 use Kkkonrad\Omnibus\Api\OmnibusPriceProviderInterface;
 use Kkkonrad\Omnibus\Model\Config;
 use Kkkonrad\Omnibus\Model\Config\Source\DisplayMode;
-use Kkkonrad\Omnibus\Model\Config\Source\PercentageMode;
+use Kkkonrad\Omnibus\Model\PercentageFormatter;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Helper\Data as CatalogHelper;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
@@ -34,6 +34,7 @@ class PriceMessage extends Template
         private readonly Configurable $configurableType,
         private readonly CatalogHelper $catalogHelper,
         private readonly TaxConfig $taxConfig,
+        private readonly PercentageFormatter $percentageFormatter,
         array $data = []
     ) {
         parent::__construct($context, $data);
@@ -74,7 +75,7 @@ class PriceMessage extends Template
         if (!$price) {
             return '';
         }
-        return $this->formatMessage($price);
+        return $this->formatMessage($price, $this->getProduct());
     }
 
     /** @return array<int, string> */
@@ -100,17 +101,19 @@ class PriceMessage extends Template
             if (!(bool)$child->getCustomAttribute('hide_omnibus_price')?->getValue()
                 && $price
                 && $this->shouldShowPrice($price)) {
-                $messages[(int)$child->getId()] = $this->formatMessage($price);
+                $messages[(int)$child->getId()] = $this->formatMessage($price, $child);
             }
         }
         return $messages;
     }
 
-    private function formatMessage(OmnibusPriceInterface $price): string
+    private function formatMessage(
+        OmnibusPriceInterface $price,
+        ?ProductInterface $product = null
+    ): string
     {
         $reference = (float)$this->getDisplayReference($price);
         $current = $price->getCurrentPrice();
-        $product = $this->getProduct();
         if ($product) {
             $displayType = $this->taxConfig->getPriceDisplayType($this->storeManager->getStore());
             $includingTax = $displayType !== TaxConfig::DISPLAY_TYPE_EXCLUDING_TAX;
@@ -128,7 +131,10 @@ class PriceMessage extends Template
         $percentage = $reference > 0
             ? (($reference - $current) / $reference) * 100
             : 0.0;
-        $percentageText = $this->formatPercentage($percentage);
+        $percentageText = $this->percentageFormatter->format(
+            $percentage,
+            (int)$this->storeManager->getStore()->getId()
+        );
         $safeTemplate = $this->escaper->escapeHtml($this->config->getLabel(), ['span', 'i', 'u', 'b']);
         return strtr($safeTemplate, [
             '{days}' => (string)$price->getPeriodDays(),
@@ -159,15 +165,4 @@ class PriceMessage extends Template
             : $price->getReferencePrice();
     }
 
-    private function formatPercentage(float $percentage): string
-    {
-        $mode = $this->config->getPercentageMode();
-        if ($mode === PercentageMode::HIDDEN
-            || abs($percentage) < 0.00005
-            || ($mode === PercentageMode::DISCOUNT_ONLY && $percentage < 0)
-            || ($mode === PercentageMode::INCREASE_ONLY && $percentage > 0)) {
-            return '';
-        }
-        return ($percentage > 0 ? '-' : '+') . number_format(abs($percentage), 0) . '%';
-    }
 }

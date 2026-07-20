@@ -27,10 +27,11 @@ class MassVisibility extends Action implements HttpPostActionInterface
     public function execute(): Redirect
     {
         $value = (int)(bool)$this->getRequest()->getParam('value', 1);
+        $storeId = max(0, (int)$this->getRequest()->getParam('store', 0));
         $collection = $this->filter->getCollection($this->collectionFactory->create());
         $ids = array_map('intval', $collection->getAllIds());
         if ($ids !== []) {
-            $this->productAction->updateAttributes($ids, ['hide_omnibus_price' => $value], 0);
+            $this->productAction->updateAttributes($ids, ['hide_omnibus_price' => $value], $storeId);
         }
         $this->messageManager->addSuccessMessage(
             __('Updated Omnibus price visibility for %1 product(s).', count($ids))

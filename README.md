@@ -215,7 +215,7 @@ Grid umożliwia filtrowanie między innymi po SKU, witrynie, grupie klientów,
 cenach, walucie, czasie obowiązywania i źródle zmiany. Dostępne są także:
 
 - przejście do produktu;
-- masowe usuwanie wpisów historii;
+- masowe usuwanie zamkniętych wpisów historii (aktywny przedział jest chroniony);
 - przebudowa całej historii;
 - podgląd ostatnich wpisów na formularzu produktu.
 
@@ -282,8 +282,10 @@ Docker, Warden lub DDEV trzeba używać właściwego wrappera.
 bin/magento omnibus:diagnose
 ```
 
-Pokazuje konfigurację okresu i retencji oraz porównuje liczbę kontekstów w
-indeksie Magento, indeksie Omnibus i historii.
+Pokazuje konfigurację okresu i retencji oraz porównuje konteksty w indeksie
+Magento, indeksie Omnibus i historii. Sprawdza również brakujące i nadmiarowe
+konteksty, brak lub duplikaty otwartych przedziałów, niezgodności cen oraz
+konfigurację retencji każdej witryny.
 
 ### Ręczne uzgodnienie
 
@@ -312,6 +314,10 @@ bin/magento omnibus:rebuild --force
 
 > Uwaga: komenda usuwa całą historię i indeks modułu, a następnie tworzy nowy
 > snapshot. Operacja jest nieodwracalna bez kopii bazy danych.
+
+Przebudowa korzysta ze wspólnej blokady operacji cenowych. Usunięcie danych i
+utworzenie nowego snapshotu odbywa się w jednej transakcji; błąd dowolnego
+kontekstu wycofuje całą operację.
 
 Przed wykonaniem w produkcji należy utworzyć backup i zaplanować okno
 serwisowe. Operacja jest synchroniczna i na dużych katalogach może trwać długo.
@@ -514,7 +520,8 @@ Sprawdź kolejno:
 
 ```bash
 bin/magento module:status Kkkonrad_Omnibus
-bin/magento config:show kkkonrad_omnibus/general/display_place
+bin/magento config:show kkkonrad_omnibus/general/display_on_product
+bin/magento config:show kkkonrad_omnibus/general/display_on_listing
 bin/magento config:show kkkonrad_omnibus/general/display_mode
 bin/magento config:show kkkonrad_omnibus/general/hide_equal
 bin/magento indexer:status catalog_product_price kkkonrad_omnibus_price

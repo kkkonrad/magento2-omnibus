@@ -46,6 +46,11 @@ class OmnibusPrice extends DataObject implements OmnibusPriceInterface
         return (bool)$this->getData(self::HAS_ACTIVE_DISCOUNT);
     }
 
+    public function getHasActiveDiscount(): bool
+    {
+        return $this->hasActiveDiscount();
+    }
+
     public function getMessage(): string
     {
         return (string)$this->getData(self::MESSAGE);

@@ -74,7 +74,9 @@ class PriceHistory
                     $now
                 );
                 $this->connection->update($indexTable, [
-                    'lowest_price' => $rollingLowest ?? $effectivePrice,
+                    'lowest_price' => $rollingLowest === null
+                        ? $effectivePrice
+                        : min($effectivePrice, $rollingLowest),
                     'calculated_at' => $now,
                 ], $contextWhere);
                 $this->connection->commit();

@@ -64,6 +64,13 @@ interface OmnibusPriceInterface
     public function hasActiveDiscount(): bool;
 
     /**
+     * Return whether a discount is currently active for service-contract serialization.
+     *
+     * @return bool
+     */
+    public function getHasActiveDiscount(): bool;
+
+    /**
      * Return the formatted storefront message.
      *
      * @return string
